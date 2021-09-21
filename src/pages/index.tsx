@@ -2,7 +2,7 @@ import { GetStaticProps } from 'next';
 
 import { getPrismicClient } from '../services/prismic';
 
-import Prismic from '@prismicio/client'
+import Prismic from '@prismicio/client';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
@@ -33,12 +33,11 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps) {
-  const [results, setResults] = useState<Post[]>(postsPagination.results)
-  const [nextPage, setNextPage] = useState(postsPagination.next_page)
+  const [results, setResults] = useState<Post[]>(postsPagination.results);
+  const [nextPage, setNextPage] = useState(postsPagination.next_page);
   async function handleLoadPosts() {
-    const newResults = await fetch(nextPage)
-      .then(response => response.json())
-    setNextPage(newResults.nextPage)
+    const newResults = await fetch(nextPage).then(response => response.json());
+    setNextPage(newResults.nextPage);
 
     const newPosts: Post[] = newResults.results.map(result => {
       return {
@@ -47,55 +46,50 @@ export default function Home({ postsPagination }: HomeProps) {
         data: {
           author: result.data.author,
           title: result.data.title,
-          subtitle: result.data.subtitle
-        }
-      }
-    })
-    setResults([...results, ...newPosts])
-
+          subtitle: result.data.subtitle,
+        },
+      };
+    });
+    setResults([...results, ...newPosts]);
   }
   return (
     <>
       <Head>
         <title>Spacetravelling</title>
       </Head>
-      <main className={styles.container}>
+      <main className={commonStyles.container}>
         <div className={styles.posts}>
-          {
-            results.map(post => (
-              <Link href={`/post/${post.uid}`} key={post.uid}>
-                <a>
-                  <h1>{post.data.title}</h1>
-                  <p>{post.data.subtitle}</p>
-                  <div className={styles.info}>
-                    <div>
-                      <img src="/images/calendar.svg" alt="Calendar" />
-                      <time>
+          {results.map(post => (
+            <Link href={`/post/${post.uid}`} key={post.uid}>
+              <a>
+                <h1>{post.data.title}</h1>
+                <p>{post.data.subtitle}</p>
+                <div className={styles.info}>
+                  <div>
+                    <img src="/images/calendar.svg" alt="Calendar" />
+                    <time>
+                      {format(
+                        new Date(post.first_publication_date),
+                        'dd MMM yyyy',
                         {
-                          format(
-                            new Date(post.first_publication_date),
-                            'dd MMM yyyy',
-                            {
-                              locale: ptBR
-                            }
-                          )
+                          locale: ptBR,
                         }
-                      </time>
-                    </div>
-                    <div>
-                      <img src="/images/user.svg" alt="User" />
-                      {post.data.author}
-                    </div>
+                      )}
+                    </time>
                   </div>
-                </a>
-              </Link>
-            ))
-          }
-          {
-            nextPage ?
-              <button onClick={handleLoadPosts}>Carregar mais posts</button>
-              : ''
-          }
+                  <div>
+                    <img src="/images/user.svg" alt="User" />
+                    {post.data.author}
+                  </div>
+                </div>
+              </a>
+            </Link>
+          ))}
+          {nextPage ? (
+            <button onClick={handleLoadPosts}>Carregar mais posts</button>
+          ) : (
+            ''
+          )}
         </div>
       </main>
     </>
@@ -104,12 +98,17 @@ export default function Home({ postsPagination }: HomeProps) {
 
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
-  const postsResponse = await prismic.query([
-    Prismic.predicates.at('document.type', 'posts')
-  ], {
-    fetch: ['publication.title', 'publication.subtitle', 'publication.author'],
-    pageSize: 1
-  });
+  const postsResponse = await prismic.query(
+    [Prismic.predicates.at('document.type', 'posts')],
+    {
+      fetch: [
+        'publication.title',
+        'publication.subtitle',
+        'publication.author',
+      ],
+      pageSize: 1,
+    }
+  );
 
   const posts = postsResponse.results.map(post => {
     return {
@@ -118,17 +117,17 @@ export const getStaticProps: GetStaticProps = async () => {
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
-        author: post.data.author
-      }
-    }
-  })
+        author: post.data.author,
+      },
+    };
+  });
 
   return {
     props: {
       postsPagination: {
         next_page: postsResponse.next_page,
-        results: posts
-      }
-    }
-  }
+        results: posts,
+      },
+    },
+  };
 };

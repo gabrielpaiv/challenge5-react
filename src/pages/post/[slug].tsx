@@ -3,7 +3,7 @@ import { RichText } from 'prismic-dom';
 import Head from 'next/head';
 
 import { getPrismicClient } from '../../services/prismic';
-import Prismic from '@prismicio/client'
+import Prismic from '@prismicio/client';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
@@ -34,18 +34,18 @@ interface PostProps {
 
 export default function Post({ post }: PostProps) {
   const totalWords = post.data.content.reduce((total, contentItem) => {
-    total += contentItem.heading ? contentItem.heading?.split(' ').length : 0
+    total += contentItem.heading ? contentItem.heading?.split(' ').length : 0;
 
-    const words = contentItem.body.map(item => item.text.split(' ').length)
-    words.map(word => (total += word))
+    const words = contentItem.body.map(item => item.text.split(' ').length);
+    words.map(word => (total += word));
 
-    return total
-  }, 0)
+    return total;
+  }, 0);
 
-  const router = useRouter()
+  const router = useRouter();
 
   if (router.isFallback) {
-    return <h1>Carregando...</h1>
+    return <h1>Carregando...</h1>;
   }
 
   return (
@@ -53,8 +53,8 @@ export default function Post({ post }: PostProps) {
       <Head>
         <title>{post.data.title}</title>
       </Head>
-      <main className={styles.container}>
-        <img src={post.data.banner.url} alt="Banner" />
+      <img src={post.data.banner.url} alt="Banner" className={styles.banner} />
+      <main className={commonStyles.container}>
         <article className={styles.content}>
           <div className={styles.head}>
             <h1>{post.data.title}</h1>
@@ -62,15 +62,13 @@ export default function Post({ post }: PostProps) {
               <div>
                 <img src="/images/calendar.svg" alt="Calendar" />
                 <time>
-                  {
-                    format(
-                      new Date(post.first_publication_date),
-                      'dd MMM yyyy',
-                      {
-                        locale: ptBR
-                      }
-                    )
-                  }
+                  {format(
+                    new Date(post.first_publication_date),
+                    'dd MMM yyyy',
+                    {
+                      locale: ptBR,
+                    }
+                  )}
                 </time>
               </div>
 
@@ -85,46 +83,44 @@ export default function Post({ post }: PostProps) {
               </div>
             </div>
           </div>
-          {
-            post.data.content.map(item => (
-              <div key={item.heading}>
-                <h3>{item.heading}</h3>
-                <section>
-                  {
-                    item.body.map(bodyItem => (<p key={bodyItem.text}>{bodyItem.text}</p>))
-                  }
-                </section>
-              </div>
-            ))
-          }
+          {post.data.content.map(item => (
+            <div key={item.heading}>
+              <h3>{item.heading}</h3>
+              <section>
+                {item.body.map(bodyItem => (
+                  <p key={bodyItem.text.split('.')[0]}>{bodyItem.text}</p>
+                ))}
+              </section>
+            </div>
+          ))}
         </article>
       </main>
     </>
-  )
+  );
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
   const posts = await prismic.query([
-    Prismic.predicates.at('document.type', 'posts')
-  ])
+    Prismic.predicates.at('document.type', 'posts'),
+  ]);
 
   const paths = posts.results.map(post => {
     return {
       params: {
-        slug: post.uid
-      }
-    }
-  })
+        slug: post.uid,
+      },
+    };
+  });
 
   return {
     paths,
-    fallback: true
-  }
+    fallback: true,
+  };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { slug } = params
+  const { slug } = params;
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
 
@@ -136,15 +132,15 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       title: response.data.title,
       subtitle: response.data.subtitle,
       banner: {
-        url: response.data.banner.url
+        url: response.data.banner.url,
       },
       author: response.data.author,
-      content: response.data.content
-    }
-  }
+      content: response.data.content,
+    },
+  };
   return {
     props: {
-      post
-    }
-  }
+      post,
+    },
+  };
 };
