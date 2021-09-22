@@ -1,23 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { Document } from '@prismicio/client/types/documents';
 import { getPrismicClient } from '../../services/prismic';
 
-import { Document } from '@prismicio/client/types/documents';
-
-function linkResolver(doc: Document): string {
-  if (doc.type === 'post') {
-    return `/post/${doc.uid}`;
-  }
-  return '/';
-}
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { token: ref, documentId } = req.query;
+  function linkResolver(doc: Document): string {
+    if (doc.type === 'posts') {
+      return `/post/${doc.uid}`;
+    }
+    return '/';
+  }
 
-  const url = await getPrismicClient()
-    .getPreviewResolver(String(ref), String(documentId))
+  const { token: ref, documentId } = req.query;
+  const redirectUrl = await getPrismicClient(req)
+    .getPreviewResolver(ref as string, documentId as string)
     .resolve(linkResolver, '/');
 
-  if (!url) {
+  if (!redirectUrl) {
     return res.status(401).json({ message: 'Invalid token' });
   }
 
@@ -25,9 +23,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     ref,
   });
 
+  res.setPreviewData({ ref });
+
   res.write(
-    `<!DOCTYPE html><html><head><meta http-equiv="Refresh" content="0; url=${url}" />
-    <script>window.location.href = '${url}'</script>
+    `<!DOCTYPE html><html><head><meta http-equiv="Refresh" content="0; url=${redirectUrl}" />
+    <script>window.location.href = '${redirectUrl}'</script>
     </head>`
   );
   res.end();

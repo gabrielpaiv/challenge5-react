@@ -6,7 +6,6 @@ import Prismic from '@prismicio/client';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
-import { RichText } from 'prismic-dom';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import Head from 'next/head';
@@ -91,13 +90,15 @@ export default function Home({ postsPagination, preview }: HomeProps) {
           ) : (
             ''
           )}
-          {preview && (
-            <aside>
-              <Link href="/api/exit-preview">
-                <a>Sair do modo Preview</a>
-              </Link>
-            </aside>
-          )}
+          {
+            preview && (
+              <aside>
+                <Link href="/api/exit-preview">
+                  <a className={commonStyles.exitPreview}>Sair do modo Preview</a>
+                </Link>
+              </aside>
+            )
+          }
         </div>
       </main>
     </>
@@ -141,6 +142,7 @@ export const getStaticProps: GetStaticProps = async ({
         results: posts,
       },
       preview,
+      revalidate: 60 * 60,
     },
   };
 };

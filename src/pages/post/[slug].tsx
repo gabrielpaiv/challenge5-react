@@ -10,6 +10,7 @@ import styles from './post.module.scss';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface Post {
   first_publication_date: string | null;
@@ -30,9 +31,10 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean
 }
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post, preview }: PostProps) {
   const totalWords = post.data.content.reduce((total, contentItem) => {
     total += contentItem.heading ? contentItem.heading?.split(' ').length : 0;
 
@@ -47,7 +49,6 @@ export default function Post({ post }: PostProps) {
   if (router.isFallback) {
     return <h1>Carregando...</h1>;
   }
-
   return (
     <>
       <Head>
@@ -94,6 +95,15 @@ export default function Post({ post }: PostProps) {
             </div>
           ))}
         </article>
+        {
+          preview && (
+            <aside>
+              <Link href="/api/exit-preview">
+                <a className={commonStyles.exitPreview}>Sair do modo Preview</a>
+              </Link>
+            </aside>
+          )
+        }
       </main>
     </>
   );
@@ -119,10 +129,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData
+}) => {
   const { slug } = params;
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref || null,
+  });
 
   const post = {
     first_publication_date: response.first_publication_date,
@@ -141,6 +157,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       post,
+      preview,
     },
   };
 };
