@@ -95,15 +95,18 @@ export default function Post({ post, preview }: PostProps) {
             </div>
           ))}
         </article>
-        {
-          preview && (
-            <aside>
-              <Link href="/api/exit-preview">
-                <a className={commonStyles.exitPreview}>Sair do modo Preview</a>
-              </Link>
-            </aside>
-          )
-        }
+        <footer className={styles.footerContent}>
+
+          {
+            preview && (
+              <aside>
+                <Link href="/api/exit-preview">
+                  <a className={commonStyles.exitPreview}>Sair do modo Preview</a>
+                </Link>
+              </aside>
+            )
+          }
+        </footer>
       </main>
     </>
   );
@@ -114,7 +117,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await prismic.query([
     Prismic.predicates.at('document.type', 'posts'),
   ]);
-
   const paths = posts.results.map(post => {
     return {
       params: {

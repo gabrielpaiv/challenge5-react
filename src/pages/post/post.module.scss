@@ -47,3 +47,10 @@
     }
   }
 }
+
+.footerContent {
+  width: 100%;
+  max-width: 700px;
+  margin: 3.75rem auto 5rem;
+  border-top: 1px solid var(--gray-300);
+}

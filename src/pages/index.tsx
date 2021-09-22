@@ -107,7 +107,6 @@ export default function Home({ postsPagination, preview }: HomeProps) {
 
 export const getStaticProps: GetStaticProps = async ({
   preview = false,
-  previewData,
 }) => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
@@ -119,7 +118,6 @@ export const getStaticProps: GetStaticProps = async ({
         'publication.author',
       ],
       pageSize: 1,
-      ref: previewData?.ref ?? null,
     }
   );
 
