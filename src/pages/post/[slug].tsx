@@ -51,7 +51,7 @@ interface PostProps {
 }
 
 export default function Post({ post, navigation, preview }: PostProps) {
-  const totalWords = post.data.content.reduce((total, contentItem) => {
+  const totalWords = post?.data.content.reduce((total, contentItem) => {
     total += contentItem.heading ? contentItem.heading?.split(' ').length : 0;
 
     const words = contentItem.body.map(item => item.text.split(' ').length);
