@@ -4,6 +4,8 @@ import Head from 'next/head';
 import { getPrismicClient } from '../../services/prismic';
 import Prismic from '@prismicio/client';
 
+import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
+
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import { format } from 'date-fns';
@@ -36,18 +38,18 @@ interface PostProps {
   preview: boolean;
   navigation: {
     prevPost: {
-      uid: string
+      uid: string;
       data: {
-        title: string
-      }
-    }[]
+        title: string;
+      };
+    }[];
     nextPost: {
-      uid: string
+      uid: string;
       data: {
-        title: string
-      }
-    }[]
-  }
+        title: string;
+      };
+    }[];
+  };
 }
 
 export default function Post({ post, navigation, preview }: PostProps) {
@@ -77,7 +79,7 @@ export default function Post({ post, navigation, preview }: PostProps) {
             <h1>{post.data.title}</h1>
             <div className={styles.info}>
               <div>
-                <img src="/images/calendar.svg" alt="Calendar" />
+                <FiCalendar size={20} />
                 <time>
                   {format(
                     new Date(post.first_publication_date),
@@ -90,29 +92,28 @@ export default function Post({ post, navigation, preview }: PostProps) {
               </div>
 
               <div>
-                <img src="/images/user.svg" alt="User" />
+                <FiUser size={20} />
                 {post.data.author}
               </div>
 
               <div>
-                <img src="/images/clock.svg" alt="CLock" />
+                <FiClock size={20} />
                 {Math.ceil(totalWords / 200)} min
               </div>
             </div>
 
-            {
-              post.first_publication_date !== post.last_publication_date &&
-              <p>* editado em {
-                format(
+            {post.first_publication_date !== post.last_publication_date && (
+              <p>
+                * editado em{' '}
+                {format(
                   new Date(post.last_publication_date),
                   'dd MMM yyyy, às H:mm',
                   {
                     locale: ptBR,
                   }
-                )
-              }</p>
-            }
-
+                )}
+              </p>
+            )}
           </div>
           {post.data.content.map(item => {
             let cont = 0;
@@ -121,7 +122,7 @@ export default function Post({ post, navigation, preview }: PostProps) {
                 <h3>{item.heading}</h3>
                 <section
                   dangerouslySetInnerHTML={{
-                    __html: RichText.asHtml(item.body)
+                    __html: RichText.asHtml(item.body),
                   }}
                 />
               </div>
@@ -130,24 +131,22 @@ export default function Post({ post, navigation, preview }: PostProps) {
         </article>
         <footer className={styles.footerContent}>
           <aside className={styles.postNavigation}>
-            {
-              navigation.nextPost[0] &&
+            {navigation.nextPost[0] && (
               <div className={styles.navigationNext}>
                 <h4>{navigation.nextPost[0].data.title}</h4>
                 <Link href={`/post/${navigation.nextPost[0].uid}`}>
                   <a>Próximo post</a>
                 </Link>
               </div>
-            }
-            {
-              navigation.prevPost[0] &&
+            )}
+            {navigation.prevPost[0] && (
               <div className={styles.navigationPrev}>
                 <h4>{navigation.prevPost[0].data.title}</h4>
                 <Link href={`/post/${navigation.prevPost[0].uid}`}>
                   <a>Post anterior</a>
                 </Link>
               </div>
-            }
+            )}
           </aside>
           <Comments />
           {preview && (
@@ -198,17 +197,17 @@ export const getStaticProps: GetStaticProps = async ({
     {
       pageSize: 1,
       after: response.id,
-      orderings: '[document.first_publication_date]'
+      orderings: '[document.first_publication_date]',
     }
-  )
+  );
   const prevPost = await prismic.query(
     [Prismic.Predicates.at('document.type', 'posts')],
     {
       pageSize: 1,
       after: response.id,
-      orderings: '[document.first_publication_date desc]'
+      orderings: '[document.first_publication_date desc]',
     }
-  )
+  );
 
   const post = {
     first_publication_date: response.first_publication_date,
@@ -230,10 +229,10 @@ export const getStaticProps: GetStaticProps = async ({
       post,
       navigation: {
         prevPost: prevPost?.results,
-        nextPost: nextPost?.results
+        nextPost: nextPost?.results,
       },
       preview,
     },
-    revalidate: 60 * 60 * 24
+    revalidate: 60 * 60 * 24,
   };
 };

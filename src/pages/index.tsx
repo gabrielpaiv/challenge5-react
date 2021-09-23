@@ -4,6 +4,8 @@ import { getPrismicClient } from '../services/prismic';
 
 import Prismic from '@prismicio/client';
 
+import { FiCalendar, FiUser } from 'react-icons/fi';
+
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 import { format } from 'date-fns';
@@ -66,7 +68,7 @@ export default function Home({ postsPagination, preview }: HomeProps) {
                 <p>{post.data.subtitle}</p>
                 <div className={styles.info}>
                   <div>
-                    <img src="/images/calendar.svg" alt="Calendar" />
+                    <FiCalendar size={20} />
                     <time>
                       {format(
                         new Date(post.first_publication_date),
@@ -78,7 +80,7 @@ export default function Home({ postsPagination, preview }: HomeProps) {
                     </time>
                   </div>
                   <div>
-                    <img src="/images/user.svg" alt="User" />
+                    <FiUser size={20} />
                     {post.data.author}
                   </div>
                 </div>
@@ -90,24 +92,20 @@ export default function Home({ postsPagination, preview }: HomeProps) {
           ) : (
             ''
           )}
-          {
-            preview && (
-              <aside>
-                <Link href="/api/exit-preview">
-                  <a className={commonStyles.exitPreview}>Sair do modo Preview</a>
-                </Link>
-              </aside>
-            )
-          }
+          {preview && (
+            <aside>
+              <Link href="/api/exit-preview">
+                <a className={commonStyles.exitPreview}>Sair do modo Preview</a>
+              </Link>
+            </aside>
+          )}
         </div>
       </main>
     </>
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({
-  preview = false,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ preview = false }) => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
     [Prismic.predicates.at('document.type', 'posts')],
