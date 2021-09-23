@@ -1,5 +1,4 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { RichText } from 'prismic-dom';
 import Head from 'next/head';
 
 import { getPrismicClient } from '../../services/prismic';
@@ -11,6 +10,7 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import Comments from '../../components/Comments';
 
 interface Post {
   first_publication_date: string | null;
@@ -96,7 +96,7 @@ export default function Post({ post, preview }: PostProps) {
           ))}
         </article>
         <footer className={styles.footerContent}>
-
+          <Comments />
           {
             preview && (
               <aside>
