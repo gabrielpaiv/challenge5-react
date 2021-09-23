@@ -8,6 +8,14 @@
   margin: 0 auto;
   margin-top: 5rem;
 
+  a {
+    color: var(--pink-500);
+  }
+
+  a {
+    color: var(--pink-500);
+  }
+
   & .head {
     margin-bottom: 4rem;
     h1 {
@@ -16,6 +24,13 @@
       color: var(--white);
       margin-bottom: 1.5rem;
     }
+
+    p {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      font-style: italic;
+    }
+
     & .info {
       font-size: 0.875rem;
       font-weight: 400;
@@ -53,4 +68,42 @@
   max-width: 700px;
   margin: 3.75rem auto 5rem;
   border-top: 1px solid var(--gray-300);
+}
+
+.postNavigation {
+  position: relative;
+  margin-top: 3rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 5rem;
+  height: 3.25rem;
+
+  h4 {
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: var(--white);
+  }
+
+  a {
+    color: var(--pink-500);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .navigationNext {
+    position: relative;
+    left: 0;
+    top: 0;
+    justify-content: flex-start;
+    text-align: left;
+    max-width: 360px;
+  }
+
+  .navigationPrev {
+    position: absolute;
+    right: 0;
+    justify-content: flex-end;
+    text-align: right;
+    max-width: 360px;
+  }
 }
