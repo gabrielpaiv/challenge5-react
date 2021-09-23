@@ -140,7 +140,7 @@ export const getStaticProps: GetStaticProps = async ({
         results: posts,
       },
       preview,
-      revalidate: 60 * 60,
+      revalidate: 60 * 60 * 24,
     },
   };
 };
