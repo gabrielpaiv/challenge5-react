@@ -117,7 +117,7 @@ export const getStaticProps: GetStaticProps = async ({
         'publication.subtitle',
         'publication.author',
       ],
-      pageSize: 1,
+      pageSize: 5,
     }
   );
 
